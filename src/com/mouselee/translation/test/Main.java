@@ -21,11 +21,11 @@ public class Main {
 		//XlsReader test = new XlsReader("D:\\officework\\20130802\\translationtest.xls");
 		//Translations t = test.parseFromXls();
 		//System.out.println("translation "+ t);
-		XmlReader xmlTest = new XmlReader("D:\\source\\Meep\\ospad\\trunk");
+		XmlReader xmlTest = new XmlReader("D:\\android_code\\android_4_0\\packages\\apps");
 		Translations translations =  xmlTest.parseStringXmls();
 		System.out.println(translations);
 		XlsWriter xlsWriter = new XlsWriter();
-		xlsWriter.setXlsPath("D:\\officework\\20130802\\translationtest"+System.currentTimeMillis()+".xls");
+		xlsWriter.setXlsPath("D:\\temp\\translationtest"+System.currentTimeMillis()+".xls");
 		xlsWriter.writeToXls(translations);
 		
 	}
