@@ -15,11 +15,11 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.mouselee.translation.vo.LocalItem;
-import com.mouselee.translation.vo.MeepProject;
+import com.mouselee.translation.vo.Language;
+import com.mouselee.translation.vo.Project;
 import com.mouselee.translation.vo.Translations;
 import com.mouselee.translation.vo.XMLItems;
-import com.mouselee.translation.vo.XMLNote;
+import com.mouselee.translation.vo.XMLFile;
 
 /**
  * @author aaronli
@@ -54,11 +54,11 @@ public class XlsWriter {
 		}
 	}
 	
-	private void loopSheets(List<MeepProject> projects) {
-		for (MeepProject p : projects ) {
+	private void loopSheets(List<Project> projects) {
+		for (Project p : projects ) {
 			Sheet sheet = workbook.createSheet(p.getProjectName());
 			mRowIndex = 0;
-			List<LocalItem> localItems = p.getLocalItem();
+			List<Language> localItems = p.getLanguageList();
 			if (localItems != null && localItems.size() > 0) {
 				loopStringFile(sheet, localItems);
 			}
@@ -66,10 +66,10 @@ public class XlsWriter {
 	}
 	
 	
-	private void loopStringFile(Sheet sheet, List<LocalItem> localItems) {
+	private void loopStringFile(Sheet sheet, List<Language> localItems) {
 		// we have to loop the LocalItem 's language 'default' first.And then loop others languages except 'default'
-		for (LocalItem item : localItems) {
-			if ("default".equals(item.getLanguage())) {
+		for (Language item : localItems) {
+			if ("default".equals(item.getLanguageName())) {
 				Row firstRow = sheet.createRow(mRowIndex);
 				mRowIndex ++;
 				
@@ -88,18 +88,18 @@ public class XlsWriter {
 			}
 		}
 		mColIndex = 4;
-		for (LocalItem other: localItems) {
-			if ("default".equals(other.getLanguage())) {
+		for (Language other: localItems) {
+			if ("default".equals(other.getLanguageName())) {
 				continue;
 			}
 			writeOthersLanguage(sheet, other);
 		}
 	}
 	
-	private void writeDefaultLanguage(Sheet sheet, LocalItem localItem) {
-		List<XMLNote> notes = localItem.getNotes();
+	private void writeDefaultLanguage(Sheet sheet, Language localItem) {
+		List<XMLFile> notes = localItem.getXmlFiles();
 		if (notes != null) {
-			for (XMLNote xmlNote : notes) {
+			for (XMLFile xmlNote : notes) {
 				if (xmlNote.getStrings() != null) {
 					writeCellInDefaultLanguage(sheet, xmlNote);
 				}
@@ -108,15 +108,15 @@ public class XlsWriter {
 	}
 	
 	
-	private void writeOthersLanguage(Sheet sheet, LocalItem localItem) {
-		String language = localItem.getLanguage();
+	private void writeOthersLanguage(Sheet sheet, Language localItem) {
+		String language = localItem.getLanguageName();
 		Row firstRow = sheet.getRow(0);
 		mColIndex++;
 		Cell languageCell = firstRow.createCell(mColIndex);
 		languageCell.setCellValue(language);
-		List<XMLNote> notes = localItem.getNotes();
+		List<XMLFile> notes = localItem.getXmlFiles();
 		if (notes != null) {
-			for (XMLNote xmlNote : notes) {
+			for (XMLFile xmlNote : notes) {
 				if (xmlNote.getStrings() != null) {
 					writeCellInOtherLanguage(sheet, xmlNote);
 				}
@@ -124,7 +124,7 @@ public class XlsWriter {
 		}
 	}
 	
-	private void writeCellInDefaultLanguage(Sheet sheet, XMLNote xmlNote) {
+	private void writeCellInDefaultLanguage(Sheet sheet, XMLFile xmlNote) {
 		String fileName = xmlNote.getFilename();
 		String root = xmlNote.getRoot();
 		String tagName = null;
@@ -169,7 +169,7 @@ public class XlsWriter {
 		}
 	}
 	
-	private void writeCellInOtherLanguage(Sheet sheet, XMLNote xmlNote) {
+	private void writeCellInOtherLanguage(Sheet sheet, XMLFile xmlNote) {
 		String fileName = xmlNote.getFilename();
 		String root = xmlNote.getRoot();
 		String type = null;

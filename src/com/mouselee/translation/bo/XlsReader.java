@@ -19,12 +19,12 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.mouselee.translation.vo.LocalItem;
-import com.mouselee.translation.vo.MeepProject;
+import com.mouselee.translation.vo.Language;
+import com.mouselee.translation.vo.Project;
 import com.mouselee.translation.vo.Translations;
 import com.mouselee.translation.vo.XMLItemString;
 import com.mouselee.translation.vo.XMLItems;
-import com.mouselee.translation.vo.XMLNote;
+import com.mouselee.translation.vo.XMLFile;
 
 /**
  * @author aaronli
@@ -72,12 +72,12 @@ public class XlsReader {
 		return mTranslations;
 	}
 	
-	protected List<MeepProject> getAllSheet(String path){
-		List<MeepProject>  list = null;
+	protected List<Project> getAllSheet(String path){
+		List<Project>  list = null;
 		try{
 			HSSFWorkbook workBook = new HSSFWorkbook(new FileInputStream(path));
-			list = new ArrayList<MeepProject>();	// 
-			MeepProject project = null;
+			list = new ArrayList<Project>();	// 
+			Project project = null;
 			for (int numSheet = 0; numSheet < workBook.getNumberOfSheets(); numSheet++) {
 				//获得指定的表
 				Sheet sheet = workBook.getSheetAt(numSheet);
@@ -85,10 +85,10 @@ public class XlsReader {
 				if (sheet == null) {
 					continue;
 				}
-				project = new MeepProject();
+				project = new Project();
 				project.setProjectName(sheet.getSheetName());
 				// 循环行Row
-				project.setLocalItem(parsePerSheet(sheet));		//循環内包含了解析每個sheet的方法
+				project.setLanguageList(parsePerSheet(sheet));		//循環内包含了解析每個sheet的方法
 				list.add(project);
 			}
 		} catch (IOException e) {
@@ -97,29 +97,29 @@ public class XlsReader {
 		return list;
 	}
 	
-	protected List<LocalItem> parsePerSheet(Sheet sheet) {
+	protected List<Language> parsePerSheet(Sheet sheet) {
 		Row firstRow = sheet.getRow(0);
 		if (firstRow == null) {
 			return null;
 		}
-		List<LocalItem> list = new ArrayList<LocalItem>();
-		LocalItem localItem;
+		List<Language> list = new ArrayList<Language>();
+		Language localItem;
 		for (int i = 4; i <= firstRow.getLastCellNum(); i ++) {
-			localItem = new LocalItem();
+			localItem = new Language();
 			Cell cell = firstRow.getCell(i);
 			if (cell == null) {
 				continue;
 			}
-			localItem.setLanguage(cell.getStringCellValue());
-			localItem.setNotes(matchPerNote(sheet, i));
+			localItem.setLanguageName(cell.getStringCellValue());
+			localItem.setXmlFiles(matchPerNote(sheet, i));
 			list.add(localItem);
 		}
 		return list;
 	}
 	
-	protected List<XMLNote> matchPerNote(Sheet sheet, int colNum) {
-		List<XMLNote> notes = new ArrayList<XMLNote>();
-		XMLNote note = null;
+	protected List<XMLFile> matchPerNote(Sheet sheet, int colNum) {
+		List<XMLFile> notes = new ArrayList<XMLFile>();
+		XMLFile note = null;
 		String filename = null;
 		String root = null;
 		String type = null;
@@ -140,7 +140,7 @@ public class XlsReader {
 			value = row.getCell(colNum).getStringCellValue();
 			
 			if (note == null || !lastFileName.equals(filename)) {
-				note = new XMLNote();
+				note = new XMLFile();
 				lastFileName = filename;
 				note.setFilename(filename);
 				note.setRoot(root);

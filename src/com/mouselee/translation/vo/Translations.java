@@ -11,19 +11,19 @@ import java.util.List;
  */
 public class Translations {
 
-	private List<MeepProject> projects;   // every MeepMovie or MeepMusic... is one  MeepProject
+	private List<Project> projects;   // every MeepMovie or MeepMusic... is one  MeepProject
 	private String date; //  日期 編輯的時間,system.currentTimeMillions
 	private String mMeepVersion; //Meep 3.0 
 	/**
 	 * @return the projects
 	 */
-	public List<MeepProject> getProjects() {
+	public List<Project> getProjects() {
 		return projects;
 	}
 	/**
 	 * @param projects the projects to set
 	 */
-	public void setProjects(List<MeepProject> projects) {
+	public void setProjects(List<Project> projects) {
 		this.projects = projects;
 	}
 	/**

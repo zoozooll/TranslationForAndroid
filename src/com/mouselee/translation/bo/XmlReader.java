@@ -14,11 +14,11 @@ import java.util.jar.Attributes.Name;
 import org.apache.commons.logging.impl.Log4JLogger;
 import org.dom4j.DocumentException;
 
-import com.mouselee.translation.vo.LocalItem;
-import com.mouselee.translation.vo.MeepProject;
+import com.mouselee.translation.vo.Language;
+import com.mouselee.translation.vo.Project;
 import com.mouselee.translation.vo.Translations;
 import com.mouselee.translation.vo.XMLItems;
-import com.mouselee.translation.vo.XMLNote;
+import com.mouselee.translation.vo.XMLFile;
 
 /**
  * @author aaronli
@@ -63,20 +63,20 @@ public class XmlReader {
 		return mTranslations;
 	}
 	
-	private java.util.List<MeepProject> scanMeepProjects(File rootPath) {
+	private java.util.List<Project> scanMeepProjects(File rootPath) {
 		File[] files = rootPath.listFiles();
-		List<MeepProject> projects = null;
-		MeepProject item;
+		List<Project> projects = null;
+		Project item;
 		if (files != null) {
 			for (File f : files) {
-				if (f.isDirectory() && f.getName().contains("Meep")) {
+				if (f.isDirectory()) {
 					if (projects == null) {
-						projects = new ArrayList<MeepProject>();
+						projects = new ArrayList<Project>();
 					}
-					item = new MeepProject();
+					item = new Project();
 					item.setProjectName(f.getName());
 					Log.t("MeepProject.setProjectName " + f.getName());
-					item.setLocalItem(scanLocalItem(f));
+					item.setLanguageList(scanLocalItem(f));
 					projects.add(item);
 				}
 			}
@@ -84,25 +84,25 @@ public class XmlReader {
 		return projects; 
 	}
 
-	private List<LocalItem> scanLocalItem(File projectPath) {
-		List<LocalItem> list = null;
+	private List<Language> scanLocalItem(File projectPath) {
+		List<Language> list = null;
 		File[] files = new File(projectPath, "res").listFiles();
-		LocalItem item;
+		Language item;
 		if (files != null){
 			
 			for(File f : files) {
 				if (f.isDirectory() && f.getName().contains("value")) {
 					if (list == null) {
-						list = new ArrayList<LocalItem>();
+						list = new ArrayList<Language>();
 					}
 					String language = getLanguageString(f.getName());
 					if (language == null) {
 						continue;
 					}
-					item = new LocalItem();
-					item.setLanguage(language);
+					item = new Language();
+					item.setLanguageName(language);
 					Log.t("LocalItem setLanguage " + language);
-					item.setNotes(getNotes(f, language));
+					item.setXmlFiles(getNotes(f, language));
 					list.add(item);
 				}
 			}
@@ -110,12 +110,12 @@ public class XmlReader {
 		return list;
 	}
 	
-	private List<XMLNote> getNotes(File valueFolder, String language) {
-		List<XMLNote> notes = new ArrayList<XMLNote>();
-		XMLNote note;
+	private List<XMLFile> getNotes(File valueFolder, String language) {
+		List<XMLFile> notes = new ArrayList<XMLFile>();
+		XMLFile note;
 		for (File f : valueFolder.listFiles()) {
 			if (f.getName().contains("string") && getFileExtension(f.getName()).equalsIgnoreCase("xml")) {
-				note = new XMLNote();
+				note = new XMLFile();
 				note.setFilename(getFileNameWithoutExten(f.getName()));
 				Log.t("note "+note.getFilename());
 				//note.setRoot(root);
@@ -134,7 +134,7 @@ public class XmlReader {
 		if (timezonesFile.isDirectory()){
 			for (File f: timezonesFile.listFiles()) {
 				if (f.getName().contains("timezone") && getFileExtension(f.getName()).equalsIgnoreCase("xml")) {
-					note = new XMLNote();
+					note = new XMLFile();
 					//note.setFilename(filename)
 					//parseXml(f);
 					parseXml(f, note);
@@ -145,10 +145,10 @@ public class XmlReader {
 		return notes;
 	}
 	
-	private List<XMLItems> parseXml(File xmlFile, XMLNote note) {
+	private List<XMLItems> parseXml(File xmlFile, XMLFile note) {
 		List<XMLItems> strings = null;
 		try {
-			XMLFactory.instance().parse(xmlFile, note);
+			XMLReadFactory.instance().parse(xmlFile, note);
 		} catch (DocumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
