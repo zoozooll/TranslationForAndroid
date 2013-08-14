@@ -198,7 +198,7 @@ public class XlsWriter {
 					row.createCell(3).setCellValue(item.getTagName());
 					row.createCell(4).setCellValue(s);
 				}*/
-				
+				setCellStringArrayInOtherLanguage(sheet, item);
 			} else if (("timezone").equals(type)) {
 				setCellStringInOtherLanguage(sheet, item);
 			}
@@ -220,6 +220,25 @@ public class XlsWriter {
 		} else {
 			Cell matchCell = sheet.getRow(matchRow).createCell(mColIndex);
 			matchCell.setCellValue((String) item.getValue());
+		}
+	}
+	
+	private void setCellStringArrayInOtherLanguage(Sheet sheet, XMLItems item) {
+		String tagName = item.getTagName();
+		int matchRow = 0;
+		int valueIndex = 0;
+		for (int i = 1, sum = sheet.getLastRowNum(); i <= sum; i ++) {
+			String flagTagName = sheet.getRow(i).getCell(3).getStringCellValue();
+			List<String> strs = (List<String>) item.getValue();
+			if (tagName.equals(flagTagName)) {
+				matchRow = i;
+				Cell matchCell = sheet.getRow(matchRow).createCell(mColIndex);
+				matchCell.setCellValue(strs.get(valueIndex));
+				valueIndex ++;
+			}
+			if (matchRow >0 && !tagName.equals(flagTagName)) {
+				break;
+			}
 		}
 	}
 }

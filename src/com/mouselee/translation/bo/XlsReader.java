@@ -137,7 +137,10 @@ public class XlsReader {
 			root = row.getCell(1).getStringCellValue();
 			type = row.getCell(2).getStringCellValue();
 			tagname = row.getCell(3).getStringCellValue();
-			value = row.getCell(colNum).getStringCellValue();
+			Cell valueCell = row.getCell(colNum);
+			if (valueCell != null) {
+				value = valueCell.getStringCellValue();
+			}
 			
 			if (note == null || !lastFileName.equals(filename)) {
 				note = new XMLFile();

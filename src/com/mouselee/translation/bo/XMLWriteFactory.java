@@ -13,6 +13,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentFactory;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 
@@ -45,10 +46,12 @@ public class XMLWriteFactory {
 	}
 	
 	public void write(File xmlPath, XMLFile note) throws DocumentException, IOException {
-		writer = new XMLWriter(new FileWriter(xmlPath));
+		System.out.println("xmlPath "+ xmlPath);
+		OutputFormat format=OutputFormat.createPrettyPrint();
+		writer = new XMLWriter(new FileWriter(xmlPath), format);
 		Document document = createDocument(note);
 		writer.write(document);
-		
+		writer.close();
 	}
 	
 	private Document createDocument(XMLFile note) {
@@ -79,7 +82,9 @@ public class XMLWriteFactory {
 
 	private void addElementForStringArray(List<String> strs, Element arrayElement) {
 		for (String value : strs) {
-			arrayElement.addElement("item").addText(value);
+			if (value != null) {
+				arrayElement.addElement("item").addText(value);
+			}
 		}
 	}
 }

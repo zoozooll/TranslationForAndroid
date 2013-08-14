@@ -21,6 +21,11 @@ import com.mouselee.translation.vo.XMLFile;
 public class XmlWriter {
 	private String xmlsPath;
 
+	public XmlWriter(String xmlsPath) {
+		super();
+		this.xmlsPath = xmlsPath;
+	}
+
 	public void setXlsPath(String xmlsPath) {
 		this.xmlsPath = xmlsPath;
 	}
@@ -70,7 +75,8 @@ public class XmlWriter {
 		if (files != null) {
 			for (XMLFile xmlFile : files) {
 				try {
-					XMLWriteFactory.instance().write(languageDirector, xmlFile);
+					File file = new File (languageDirector, xmlFile.getFilename()+".xml");
+					XMLWriteFactory.instance().write(file, xmlFile);
 				} catch (DocumentException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -87,7 +93,7 @@ public class XmlWriter {
 		if ("default".equals(languageName)) {
 			folder = new File(projectFile, "value");
 		} else {
-			folder = new File(projectFile, "value" + languageName);
+			folder = new File(projectFile, "value-" + languageName);
 		}
 		if (checkFolder(folder)) {
 			return folder;
