@@ -4,11 +4,15 @@
 package com.mouselee.translation.bo;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+
+import org.dom4j.DocumentException;
 
 import com.mouselee.translation.vo.Language;
 import com.mouselee.translation.vo.Project;
 import com.mouselee.translation.vo.Translations;
+import com.mouselee.translation.vo.XMLFile;
 
 /**
  * @author aaronli
@@ -61,8 +65,21 @@ public class XmlWriter {
 	}
 
 	private void createXmlFiles(File languageDirector, Language language) {
-		// TODO Auto-generated method stub
 		
+		List<XMLFile> files = language.getXmlFiles();
+		if (files != null) {
+			for (XMLFile xmlFile : files) {
+				try {
+					XMLWriteFactory.instance().write(languageDirector, xmlFile);
+				} catch (DocumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	private File mkLanguageDirectories(File projectFile, String languageName) {
