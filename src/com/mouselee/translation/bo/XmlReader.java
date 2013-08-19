@@ -14,6 +14,7 @@ import java.util.jar.Attributes.Name;
 import org.apache.commons.logging.impl.Log4JLogger;
 import org.dom4j.DocumentException;
 
+import com.mouselee.translation.utils.XMLReadFactory;
 import com.mouselee.translation.vo.Language;
 import com.mouselee.translation.vo.Project;
 import com.mouselee.translation.vo.Translations;
@@ -135,7 +136,7 @@ public class XmlReader {
 			for (File f: timezonesFile.listFiles()) {
 				if (f.getName().contains("timezone") && getFileExtension(f.getName()).equalsIgnoreCase("xml")) {
 					note = new XMLFile();
-					//note.setFilename(filename)
+					note.setFilename(getFileNameWithoutExten(f.getName()));
 					//parseXml(f);
 					parseXml(f, note);
 					notes.add(note);

@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.dom4j.DocumentException;
 
+import com.mouselee.translation.utils.XMLWriteFactory;
 import com.mouselee.translation.vo.Language;
 import com.mouselee.translation.vo.Project;
 import com.mouselee.translation.vo.Translations;
@@ -75,8 +76,14 @@ public class XmlWriter {
 		if (files != null) {
 			for (XMLFile xmlFile : files) {
 				try {
-					File file = new File (languageDirector, xmlFile.getFilename()+".xml");
-					XMLWriteFactory.instance().write(file, xmlFile);
+					if (xmlFile.getFilename().equals("timezones")) {
+						File timezoneDirector = mkTimezoneDirectories(languageDirector.getParentFile(), language.getLanguageName());
+						File file = new File (timezoneDirector, xmlFile.getFilename()+".xml");
+						XMLWriteFactory.instance().write(file, xmlFile);
+					} else {
+						File file = new File (languageDirector, xmlFile.getFilename()+".xml");
+						XMLWriteFactory.instance().write(file, xmlFile);
+					}
 				} catch (DocumentException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -86,6 +93,9 @@ public class XmlWriter {
 				}
 			}
 		}
+		
+		// Added the timezone files
+
 	}
 
 	private File mkLanguageDirectories(File projectFile, String languageName) {
@@ -94,6 +104,19 @@ public class XmlWriter {
 			folder = new File(projectFile, "value");
 		} else {
 			folder = new File(projectFile, "value-" + languageName);
+		}
+		if (checkFolder(folder)) {
+			return folder;
+		}
+		return null;
+	}
+	
+	private File mkTimezoneDirectories(File projectFile, String languageName) {
+		File folder = null;
+		if ("default".equals(languageName)) {
+			folder = new File(projectFile, "xml");
+		} else {
+			folder = new File(projectFile, "xml-" + languageName);
 		}
 		if (checkFolder(folder)) {
 			return folder;

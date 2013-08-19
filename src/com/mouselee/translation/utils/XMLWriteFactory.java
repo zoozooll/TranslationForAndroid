@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.mouselee.translation.bo;
+package com.mouselee.translation.utils;
 
 import java.io.File;
 import java.io.FileWriter;
