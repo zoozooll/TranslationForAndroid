@@ -1,5 +1,11 @@
 package com.mouselee.translation.view;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
+
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 
 import javax.swing.JPanel;
@@ -31,6 +37,7 @@ public class Main extends SingleFrameApplication {
     private JTextField tfdSavedXls;
     private JLabel jLabel4;
     private JLabel jLabel5;
+    private JFileChooser fIleChooser;
     private JButton btnSavedXmlPath;
     private JButton btnStartXls2Xml;
     private JTextField tfdSavedXmlPath;
@@ -71,6 +78,11 @@ public class Main extends SingleFrameApplication {
         	topPanel.add(btnSelectXmlPath);
         	btnSelectXmlPath.setBounds(431, 85, 69, 23);
         	btnSelectXmlPath.setName("btnSelectXmlPath");
+        	btnSelectXmlPath.addMouseListener(new MouseAdapter() {
+        		public void mouseClicked(MouseEvent evt) {
+        			btnSelectXmlPathMouseClicked(evt);
+        		}
+        	});
         }
         {
         	jLabel2 = new JLabel();
@@ -94,12 +106,22 @@ public class Main extends SingleFrameApplication {
         	topPanel.add(btnSavedXlsPath);
         	btnSavedXlsPath.setBounds(431, 145, 69, 23);
         	btnSavedXlsPath.setName("btnSavedXlsPath");
+        	btnSavedXlsPath.addMouseListener(new MouseAdapter() {
+        		public void mouseClicked(MouseEvent evt) {
+        			btnSavedXlsPathMouseClicked(evt);
+        		}
+        	});
         }
         {
         	btnStartXml3Xls = new JButton();
         	topPanel.add(btnStartXml3Xls);
         	btnStartXml3Xls.setBounds(29, 188, 81, 23);
         	btnStartXml3Xls.setName("btnStartXml3Xls");
+        	btnStartXml3Xls.addMouseListener(new MouseAdapter() {
+        		public void mouseClicked(MouseEvent evt) {
+        			btnStartXml3XlsMouseClicked(evt);
+        		}
+        	});
         }
         {
         	Xls2Xml = new JLabel();
@@ -117,6 +139,11 @@ public class Main extends SingleFrameApplication {
         	topPanel.add(btnSelectXlsPath);
         	btnSelectXlsPath.setBounds(431, 312, 69, 23);
         	btnSelectXlsPath.setName("btnSelectXlsPath");
+        	btnSelectXlsPath.addMouseListener(new MouseAdapter() {
+        		public void mouseClicked(MouseEvent evt) {
+        			btnSelectXlsPathMouseClicked(evt);
+        		}
+        	});
         }
         {
         	tfdSavedXmlPath = new JTextField();
@@ -128,12 +155,22 @@ public class Main extends SingleFrameApplication {
         	topPanel.add(btnSavedXmlPath);
         	btnSavedXmlPath.setBounds(431, 387, 69, 23);
         	btnSavedXmlPath.setName("btnSavedXmlPath");
+        	btnSavedXmlPath.addMouseListener(new MouseAdapter() {
+        		public void mouseClicked(MouseEvent evt) {
+        			btnSavedXmlPathMouseClicked(evt);
+        		}
+        	});
         }
         {
         	btnStartXls2Xml = new JButton();
         	topPanel.add(btnStartXls2Xml);
         	btnStartXls2Xml.setBounds(29, 434, 63, 23);
         	btnStartXls2Xml.setName("btnStartXls2Xml");
+        	btnStartXls2Xml.addMouseListener(new MouseAdapter() {
+        		public void mouseClicked(MouseEvent evt) {
+        			btnStartXls2XmlMouseClicked(evt);
+        		}
+        	});
         }
         {
         	jLabel4 = new JLabel();
@@ -147,11 +184,46 @@ public class Main extends SingleFrameApplication {
         	jLabel5.setBounds(29, 363, 216, 15);
         	jLabel5.setName("jLabel5");
         }
+        {
+        	fIleChooser = new JFileChooser();
+        	//topPanel.add(fIleChooser);
+        	fIleChooser.setBounds(29, 11, 557, 397);
+        }
         show(topPanel);
     }
 
     public static void main(String[] args) {
         launch(Main.class, args);
+    }
+    
+    private void btnSelectXmlPathMouseClicked(MouseEvent evt) {
+    	System.out.println("btnSelectXmlPath.mouseClicked, event="+evt);
+    	//TODO add your code for btnSelectXmlPath.mouseClicked
+    }
+    
+    private void btnSavedXlsPathMouseClicked(MouseEvent evt) {
+    	System.out.println("btnSavedXlsPath.mouseClicked, event="+evt);
+    	//TODO add your code for btnSavedXlsPath.mouseClicked
+    }
+    
+    private void btnSelectXlsPathMouseClicked(MouseEvent evt) {
+    	System.out.println("btnSelectXlsPath.mouseClicked, event="+evt);
+    	//TODO add your code for btnSelectXlsPath.mouseClicked
+    }
+    
+    private void btnSavedXmlPathMouseClicked(MouseEvent evt) {
+    	System.out.println("btnSavedXmlPath.mouseClicked, event="+evt);
+    	//TODO add your code for btnSavedXmlPath.mouseClicked
+    }
+    
+    private void btnStartXml3XlsMouseClicked(MouseEvent evt) {
+    	System.out.println("btnStartXml3Xls.mouseClicked, event="+evt);
+    	//TODO add your code for btnStartXml3Xls.mouseClicked
+    }
+    
+    private void btnStartXls2XmlMouseClicked(MouseEvent evt) {
+    	System.out.println("btnStartXls2Xml.mouseClicked, event="+evt);
+    	//TODO add your code for btnStartXls2Xml.mouseClicked
     }
 
 }
