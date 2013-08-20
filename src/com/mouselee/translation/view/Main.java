@@ -10,8 +10,17 @@ import javax.swing.JLabel;
 
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jdesktop.application.SingleFrameApplication;
+
+import com.mouselee.translation.bo.XlsReader;
+import com.mouselee.translation.bo.XlsWriter;
+import com.mouselee.translation.bo.XmlReader;
+import com.mouselee.translation.bo.XmlWriter;
+import com.mouselee.translation.utils.TextUtil;
+import com.mouselee.translation.vo.Translations;
 
 
 /**
@@ -37,7 +46,7 @@ public class Main extends SingleFrameApplication {
     private JTextField tfdSavedXls;
     private JLabel jLabel4;
     private JLabel jLabel5;
-    private JFileChooser fIleChooser;
+    private JFileChooser fileChooser;
     private JButton btnSavedXmlPath;
     private JButton btnStartXls2Xml;
     private JTextField tfdSavedXmlPath;
@@ -52,6 +61,9 @@ public class Main extends SingleFrameApplication {
 
     @Override
     protected void startup() {
+    	{
+	    	getMainFrame().setSize(616, 650);
+    	}
         topPanel = new JPanel();
         topPanel.setPreferredSize(new java.awt.Dimension(600, 756));
         topPanel.setLayout(null);
@@ -185,9 +197,9 @@ public class Main extends SingleFrameApplication {
         	jLabel5.setName("jLabel5");
         }
         {
-        	fIleChooser = new JFileChooser();
+        	fileChooser = new JFileChooser();
         	//topPanel.add(fIleChooser);
-        	fIleChooser.setBounds(29, 11, 557, 397);
+        	fileChooser.setBounds(29, 11, 557, 397);
         }
         show(topPanel);
     }
@@ -197,33 +209,89 @@ public class Main extends SingleFrameApplication {
     }
     
     private void btnSelectXmlPathMouseClicked(MouseEvent evt) {
-    	System.out.println("btnSelectXmlPath.mouseClicked, event="+evt);
-    	//TODO add your code for btnSelectXmlPath.mouseClicked
+    	//System.out.println("btnSelectXmlPath.mouseClicked, event="+evt);
+    	fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    	fileChooser.setFileFilter(folderFilter);
+    	int returnVal = fileChooser.showOpenDialog(topPanel);
+    	if(returnVal == JFileChooser.APPROVE_OPTION) {
+    		String choosePath = fileChooser.getSelectedFile().getPath();
+    		tfdSelectXmlPath.setText(choosePath);
+    	}
+
     }
     
     private void btnSavedXlsPathMouseClicked(MouseEvent evt) {
-    	System.out.println("btnSavedXlsPath.mouseClicked, event="+evt);
-    	//TODO add your code for btnSavedXlsPath.mouseClicked
+    	//System.out.println("btnSavedXlsPath.mouseClicked, event="+evt);
+    	fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+    	fileChooser.setFileFilter(xlsFilter);
+    	int returnVal = fileChooser.showSaveDialog(topPanel);
+    	if(returnVal == JFileChooser.APPROVE_OPTION) {
+    		String choosePath = fileChooser.getSelectedFile().getPath();
+    		tfdSavedXls.setText(choosePath);
+    	}
     }
     
     private void btnSelectXlsPathMouseClicked(MouseEvent evt) {
-    	System.out.println("btnSelectXlsPath.mouseClicked, event="+evt);
-    	//TODO add your code for btnSelectXlsPath.mouseClicked
+    	//System.out.println("btnSelectXlsPath.mouseClicked, event="+evt);
+    	fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+    	fileChooser.setFileFilter(xlsFilter);
+    	int returnVal = fileChooser.showOpenDialog(topPanel);
+    	if(returnVal == JFileChooser.APPROVE_OPTION) {
+    		String choosePath = fileChooser.getSelectedFile().getPath();
+    		tfdChooseXlsPath.setText(choosePath);
+    	}
     }
     
     private void btnSavedXmlPathMouseClicked(MouseEvent evt) {
-    	System.out.println("btnSavedXmlPath.mouseClicked, event="+evt);
-    	//TODO add your code for btnSavedXmlPath.mouseClicked
+    	//System.out.println("btnSavedXmlPath.mouseClicked, event="+evt);
+    	fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    	fileChooser.setFileFilter(folderFilter);
+    	int returnVal = fileChooser.showSaveDialog(topPanel);
+    	if(returnVal == JFileChooser.APPROVE_OPTION) {
+    		String choosePath = fileChooser.getSelectedFile().getPath();
+    		tfdSavedXmlPath.setText(choosePath);
+    	}
     }
     
     private void btnStartXml3XlsMouseClicked(MouseEvent evt) {
-    	System.out.println("btnStartXml3Xls.mouseClicked, event="+evt);
-    	//TODO add your code for btnStartXml3Xls.mouseClicked
+    	//System.out.println("btnStartXml3Xls.mouseClicked, event="+evt);
+    	final String xmlPath = tfdSelectXmlPath.getText();
+    	final String xlsPath = tfdSavedXls.getText();
+    	if (!TextUtil.isEmpty(xlsPath) && !TextUtil.isEmpty(xmlPath)) {
+    		XmlReader xmlTest = new XmlReader(xmlPath);
+    		Translations translations =  xmlTest.parseStringXmls();
+    		//System.out.println(translations);
+    		XlsWriter xlsWriter = new XlsWriter();
+    		xlsWriter.setXlsPath(xlsPath);
+    		xlsWriter.writeToXls(translations);
+    	}
     }
     
     private void btnStartXls2XmlMouseClicked(MouseEvent evt) {
-    	System.out.println("btnStartXls2Xml.mouseClicked, event="+evt);
-    	//TODO add your code for btnStartXls2Xml.mouseClicked
+    	//System.out.println("btnStartXls2Xml.mouseClicked, event="+evt);
+    	final String xlsPath = tfdChooseXlsPath.getText();
+    	final String xmlPath = tfdSavedXmlPath.getText();
+    	if (!TextUtil.isEmpty(xlsPath) && !TextUtil.isEmpty(xmlPath)) {
+    		XlsReader test = new XlsReader(xlsPath);
+    		Translations t = test.parseFromXls();
+    		XmlWriter writer = new XmlWriter(xmlPath);
+    		writer.writeToXmls(t);
+    	}
     }
+    
+    private FileFilter folderFilter = new FileFilter() {
+		
+		@Override
+		public String getDescription() {
+			return null;
+		}
+		
+		@Override
+		public boolean accept(File f) {
+			return f.isDirectory();
+		}
+	};
+	
+	private FileFilter xlsFilter = new FileNameExtensionFilter("Excel", "xls", "xlsx") ;
 
 }

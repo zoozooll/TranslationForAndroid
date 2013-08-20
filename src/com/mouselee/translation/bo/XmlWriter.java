@@ -27,11 +27,11 @@ public class XmlWriter {
 		this.xmlsPath = xmlsPath;
 	}
 
-	public void setXlsPath(String xmlsPath) {
+	public void setXmlPath(String xmlsPath) {
 		this.xmlsPath = xmlsPath;
 	}
 	
-	public void writeToXls(Translations translations) {
+	public void writeToXmls(Translations translations) {
 		File root = new File(xmlsPath);
 		if(checkFolder(root)) {
 			createProjectFiles(root, translations);

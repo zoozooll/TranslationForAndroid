@@ -230,7 +230,7 @@ public class XlsWriter {
 		for (int i = 1, sum = sheet.getLastRowNum(); i <= sum; i ++) {
 			String flagTagName = sheet.getRow(i).getCell(3).getStringCellValue();
 			List<String> strs = (List<String>) item.getValue();
-			if (tagName.equals(flagTagName)) {
+			if (tagName.equals(flagTagName) && valueIndex < strs.size()) {
 				matchRow = i;
 				Cell matchCell = sheet.getRow(matchRow).createCell(mColIndex);
 				matchCell.setCellValue(strs.get(valueIndex));
