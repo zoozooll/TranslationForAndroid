@@ -72,6 +72,21 @@ public class XlsReader {
 		return mTranslations;
 	}
 	
+	public Translations parseFromXls(String path) {
+		File file = new File(path);
+		Translations tanslations = null;
+		if (path != null && file.exists()) {
+			tanslations = new Translations();
+			tanslations.setmMeepVersion("Meep3.0");
+			Date currentTime = new Date();
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+			String dateString = formatter.format(currentTime);
+			tanslations.setDate(dateString);
+			tanslations.setProjects(getAllSheet(path));
+		}
+		return tanslations;
+	}
+	
 	protected List<Project> getAllSheet(String path){
 		List<Project>  list = null;
 		try{
