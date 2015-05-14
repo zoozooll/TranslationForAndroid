@@ -70,7 +70,7 @@ public class XmlReader {
 		Project item;
 		if (files != null) {
 			for (File f : files) {
-				if (f.isDirectory()) {
+				if (f.isDirectory() && f.getName().contains("GameCenter")) {
 					if (projects == null) {
 						projects = new ArrayList<Project>();
 					}
@@ -197,7 +197,8 @@ public class XmlReader {
 	}
 	
 	public static boolean isInLanguage(String language) {
-		return Arrays.binarySearch(LANGUAGES, language) >= 0;
+		//return Arrays.binarySearch(LANGUAGES, language) >= 0;
+		return true;
 	}
 
 }

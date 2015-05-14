@@ -79,16 +79,15 @@ public class XlsReader {
 			list = new ArrayList<Project>();	// 
 			Project project = null;
 			for (int numSheet = 0; numSheet < workBook.getNumberOfSheets(); numSheet++) {
-				//获得指定的表
+				//鑾峰緱鎸囧畾鐨勮〃
 				Sheet sheet = workBook.getSheetAt(numSheet);
-				System.out.println("Sheet name:"+sheet.getSheetName());
 				if (sheet == null) {
 					continue;
 				}
 				project = new Project();
 				project.setProjectName(sheet.getSheetName());
-				// 循环行Row
-				project.setLanguageList(parsePerSheet(sheet));		//循環内包含了解析每個sheet的方法
+				// 寰幆琛孯ow
+				project.setLanguageList(parsePerSheet(sheet));		//寰挵鍐呭寘鍚簡瑙ｆ瀽姣忓�sheet鐨勬柟娉�
 				list.add(project);
 			}
 		} catch (IOException e) {
@@ -134,6 +133,7 @@ public class XlsReader {
 		for (int rowNum = 1; rowNum <= sheet.getLastRowNum(); rowNum++) {
 			row =  sheet.getRow(rowNum);
 			filename = row.getCell(0).getStringCellValue();
+			System.out.println("filename " + filename);
 			root = row.getCell(1).getStringCellValue();
 			type = row.getCell(2).getStringCellValue();
 			tagname = row.getCell(3).getStringCellValue();
