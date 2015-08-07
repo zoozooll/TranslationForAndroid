@@ -16,9 +16,9 @@ public class FuncExer {
 	private static Map<String, String> sLocaleMap = new HashMap<String, String>();
 	
 	static {
-		sLocaleMap.put("CHINE_NEW"  ,        "zh-rCN");    //�������� 
-		sLocaleMap.put("CHINE_OLD"  ,        "zh-rHK");    //�������� 
-		sLocaleMap.put("English"    ,        "en"    );    //Ӣ�� 
+		sLocaleMap.put("CHINESE_CN"  ,        "zh-rCN");    //�������� 
+		sLocaleMap.put("CHINESE_OLD"  ,        "zh-rHK");    //�������� 
+		sLocaleMap.put("English"    ,        "default"    );    //Ӣ�� 
 		sLocaleMap.put("FRENCH"     ,        "fr"    );    //���� 
 		sLocaleMap.put("DUTCH"      ,        "nl"    );    //���� 
 		sLocaleMap.put("GERMAN"     ,        "de"    );    //�¹� 

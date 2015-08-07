@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +22,11 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.mouselee.translation.bo.Log;
 import com.mouselee.translation.bo.XlsReader;
 import com.mouselee.translation.vo.Language;
 import com.mouselee.translation.vo.Project;
@@ -43,6 +46,8 @@ public class XlsMerge {
 	
 	private static final String EMPTY_STRING = "AABACDC,,";
 	
+	private static final String[] IGNORE_LOCALES = 
+		{};
 	
 	/**
 	 * 
@@ -111,18 +116,18 @@ public class XlsMerge {
 			if (miexls == null) {
 				miexls = new HashMap<String , Map<String, String>>();
 			}
-			parsePerMIERow (row, miexls);
+			parsePerMIERow (row, firstRow, miexls);
 		}
 		return miexls;
 	}
 	
-	private void parsePerMIERow (Row row, Map<String , Map<String, String>> item) {
+	private void parsePerMIERow (Row row, Row firstRow, Map<String , Map<String, String>> item) {
 		if (item == null) 
 			item = new HashMap<String , Map<String, String>> ();
 		Map<String, String> unit;
 		String itemId = null;
 		unit = new HashMap<String, String>();
-		for (int i = 0; i <= row.getLastCellNum(); i ++) {
+		for (int i = 0; i <= firstRow.getLastCellNum(); i ++) {
 			Cell cell = row.getCell(i);
 			if (cell == null) {
 				continue;
@@ -134,7 +139,12 @@ public class XlsMerge {
 			} else if (i < firstContentColumnIndex) {
 //				descriptions.put(row.getSheet().getRow(0).getCell(i).getStringCellValue(), cell.getStringCellValue());
 			} else {
-				String languageStringValue = row.getSheet().getRow(0).getCell(i).getStringCellValue();
+				System.out.println(row.getRowNum() +"," + i);
+				Cell firstCell = firstRow.getCell(i);
+				if (firstCell == null) {
+					continue;
+				}
+				String languageStringValue = firstCell.getStringCellValue();
 				String key =  sMIELanguageKeys(languageStringValue);
 				if (key != null) unit.put(key, cell.getStringCellValue());
 			} 
@@ -186,21 +196,25 @@ public class XlsMerge {
 			return;
 		}
 		for (int i = 4, size = firstRow.getLastCellNum(); i <= size; i++) {
-			Cell curCell = curRow.getCell(i); 
-			if (curCell == null) {
-				curCell = curRow.createCell(i);
-			}
-			String value = curCell.getStringCellValue();
 			Cell languageCell = firstRow.getCell(i);
 			if (languageCell == null) {
 				continue;
 			}
 			String languageKey = languageCell.getStringCellValue();
+			if (contains(IGNORE_LOCALES, languageKey) > -1) {
+				continue;
+			}
+			Cell curCell = curRow.getCell(i); 
+			if (curCell == null) {
+				curCell = curRow.createCell(i);
+			}
+			String value = curCell.getStringCellValue();
 			String translatedValue = map.get(languageKey);
-			if (translatedValue != null && !translatedValue.equals(value)) {
+			if (translatedValue != null && !translatedValue.trim().equals("") && !translatedValue.equals(value)) {
 				// find out difference;
 				//createDiffCellStyle(curCell);
 				curCell.setCellValue(translatedValue);
+				System.out.println(idName+" )"+languageKey+" value from " +value + " ====> "+translatedValue);
 			}
 		}
 	}
@@ -239,72 +253,87 @@ public class XlsMerge {
 				if (cell == null) {
 					cell = row.createCell(j);
 //					createDiffCellStyle(cell);
-					cell.setCellValue(EMPTY_STRING);
+//					cell.setCellValue(EMPTY_STRING);
 				} else {
 					String value = cell.getStringCellValue();
 					if (value == null || value.trim().equals("")) {
-						cell.setCellValue(EMPTY_STRING);
+//						cell.setCellValue(EMPTY_STRING);
 					}
 				}
 			}
 		}
 	}
 	
+	private static <T> int contains (T[] array, T item) {
+		int i = 0;
+		for (T t : array) {
+			if (t.equals(item)) {
+				break;
+			}
+			i ++;
+		}
+		if (i >= array.length) {
+			i = -1;
+		}
+		return i;
+	}
+	
 	private static Map<String, String> sLangsMap = new HashMap<String, String>();
 	
 	static {
-		sLangsMap.put("CHINE_NEW","zh-rCN"); //简体中文
-		sLangsMap.put("CHINE_OLD","zh-rHK"); //繁体中文
-		sLangsMap.put("ENGLISH","default");      //英语
-		sLangsMap.put("FRENCH","fr");       //法语
-		sLangsMap.put("DUTCH","nl");       //荷兰
-		sLangsMap.put("GERMAN","de");      //德国
-		sLangsMap.put("GREEK","el");       //希腊
-		sLangsMap.put("HUNGARIAN","hu");   //匈牙利
-		sLangsMap.put("ITALIAN","it");     //意大利
-		sLangsMap.put("PORTUGUESE","pt");  //葡萄牙
-		sLangsMap.put("SPANISH","es");     //西班牙
-		sLangsMap.put("TURKISH","tr");     //土耳其
-		sLangsMap.put("POLISH","pl");      //波兰
-		sLangsMap.put("CZECH","cs");       //捷克
-		sLangsMap.put("MALAY","ms");       //马来语
-		sLangsMap.put("INDONESIAN","in");  //印尼
-		sLangsMap.put("SLOVAK","sk");      //斯洛伐克
-		sLangsMap.put("ROMANIAN","ro");    //罗马尼亚
-		sLangsMap.put("SLOVENIAN","sl");   //斯洛文尼亚
-		sLangsMap.put("THAI","th");        //泰国
-		sLangsMap.put("SERBIAN","sr");     //塞尔维亚
-		sLangsMap.put("GALICIAN","gl");    //加利西亚
-		sLangsMap.put("VIETNAMESE","vi");  //越南
-		sLangsMap.put("BRAZILIAN","pt-rBR");//巴西
-		sLangsMap.put("JAPANESE","ja");    //日语
-		sLangsMap.put("LATINESP","es-rLA");  //拉丁西班牙语
-		sLangsMap.put("FARSI","fa");        //波斯
-		sLangsMap.put("CROATIAN","hr");	//克罗地亚
-		sLangsMap.put("RUSSIAN","ru");	    //俄语
-		// IDOL3 与 MIE 差异
-		sLangsMap.put("ARABIC","ar");            //阿拉拍语
-		sLangsMap.put("CATALAN","ca");           //加泰罗尼亚
-		sLangsMap.put("DANISH","da");            //丹麦
-		sLangsMap.put("FINNISH","fi");           //芬兰
-		sLangsMap.put("FRENCH_CA","fr-rCA");     //法语-加拿大
-		sLangsMap.put("NORWEGIAN","no");         //挪威
-		sLangsMap.put("SWEDISH","sv");           //瑞典
-		sLangsMap.put("EUSKERA","eu");           //巴斯克
-		// IDOL3 新增语言
-		sLangsMap.put("ALBANIAN","sq");          //阿尔巴尼亚文
-		sLangsMap.put("BENGALI","bn-rBD");       // 孟加拉
-		sLangsMap.put("BULGARIAN","bg");         //保加利亚语
-		sLangsMap.put("CAMBODIAN","km-rKH");     //柬埔寨
-		sLangsMap.put("ESTONIAN","et");          //爱沙尼亚语
-		sLangsMap.put("HEBREW","he");            //希伯来语
-		sLangsMap.put("KOREAN","ko");            //朝鲜语
-		sLangsMap.put("LAOTIAN","lo-rLA");       //老挝语
-		sLangsMap.put("LATVIAN","lv");           //拉脱维亚语
-		sLangsMap.put("LITHUANIAN","lt");        //立陶宛
-		sLangsMap.put("MACEDONIAN","mk");        //马其顿
-		sLangsMap.put("MYANMAR","my-rMM");       //缅甸
-		sLangsMap.put("UKRAINIAN","uk");         //乌克兰语
-		sLangsMap.put("Hindi","hi");
+		sLangsMap.put("Chinese_CN", "zh-rCN"); //简体中文
+		sLangsMap.put("Chinese_HK", "zh-rHK"); //繁体中文
+		sLangsMap.put("Chinese_TW", "zh-rTW"); //繁体中文
+		sLangsMap.put("English"   , "default");      //英语
+		sLangsMap.put("French"    , "fr");       //法语
+		sLangsMap.put("Dutch"     , "nl");       //荷兰
+		sLangsMap.put("German"    , "de");      //德国
+		sLangsMap.put("Greek"     , "el");       //希腊
+		sLangsMap.put("Hungarian" , "hu");   //匈牙利
+		sLangsMap.put("Italian"   , "it");     //意大利
+		sLangsMap.put("Portuguese", "pt");  //葡萄牙
+		sLangsMap.put("Spanish"   , "es");     //西班牙
+		sLangsMap.put("Turkish"   , "tr");     //土耳其
+		sLangsMap.put("Polish"    , "pl");      //波兰
+		sLangsMap.put("Czech"     , "cs");       //捷克
+		sLangsMap.put("Malay"     , "ms");       //马来语
+		sLangsMap.put("Indonesian", "in");  //印尼
+		sLangsMap.put("Slovak"    , "sk");      //斯洛伐克
+		sLangsMap.put("Romanian"  , "ro");    //罗马尼亚
+		sLangsMap.put("Slovenian" , "sl");   //斯洛文尼亚
+		sLangsMap.put("Thai"      , "th");        //泰国
+		sLangsMap.put("Serbian"   , "sr");     //塞尔维亚
+		sLangsMap.put("Galician"  , "gl");    //加利西亚
+		sLangsMap.put("Vietnamese", "vi");  //越南
+		sLangsMap.put("Brazilian" , "pt-rBR");//巴西
+		sLangsMap.put("Japanese"  , "ja");    //日语
+		sLangsMap.put("Latinesp"  , "es-rLA");  //拉丁西班牙语
+		sLangsMap.put("Farsi"     , "fa");        //波斯
+		sLangsMap.put("Croatian"  , "hr");	//克罗地亚
+		sLangsMap.put("Russian"   , "ru");	    //俄语
+		sLangsMap.put("Arabic"    , "ar");            //阿拉拍语
+		sLangsMap.put("Catalan"   , "ca");           //加泰罗尼亚
+		sLangsMap.put("Danish"    , "da-rDK");            //丹麦
+		sLangsMap.put("Finnish"   , "fi");           //芬兰
+		sLangsMap.put("French_CA" , "fr-rCA");     //法语-加拿大
+		sLangsMap.put("Norwegian" , "nb-rNO");         //挪威
+		sLangsMap.put("Swedish"   , "sv");           //瑞典
+		sLangsMap.put("Euskera"   , "eu");           //巴斯克
+		sLangsMap.put("Albanian"  , "sq");          //阿尔巴尼亚文
+		sLangsMap.put("Bengali"   , "bn-rBD");       // 孟加拉
+		sLangsMap.put("Bulgarian" , "bg");         //保加利亚语
+		sLangsMap.put("Cambodian" , "km-rKH");     //柬埔寨
+		sLangsMap.put("Estonian"  , "et");          //爱沙尼亚语
+		sLangsMap.put("Hebrew"    , "iw");            //希伯来语
+		sLangsMap.put("Korean"    , "ko");            //朝鲜语
+		sLangsMap.put("Laotian"   , "lo-rLA");       //老挝语
+		sLangsMap.put("Latvian"   , "lv");           //拉脱维亚语
+		sLangsMap.put("Lithuanian", "lt");        //立陶宛
+		sLangsMap.put("Macedonian", "mk");        //马其顿
+		sLangsMap.put("Myanmar"   , "my-rMM");       //缅甸
+		sLangsMap.put("Ukrainian" , "uk");         //乌克兰语
+		sLangsMap.put("Hindi"     , "hi");
 	}
+	//Thai	Spanish	Latinesp	French	French_CA	German	Russian	Slovak	Italian	Arabic	Portuguese	Turkish	Vietnamese	Indonesian	Malay	Hindi	Danish	Czech	Polish	Hungarian	Finnish	Dutch	Swedish	Croatian	Romanian	Slovenian	Greek	Hebrew	Bulgarian	Ukrainian	Brazilian	Catalan	Farsi	Serbian	Korean	Japanese	Norwegian	Macedonian	Galician	Euskera	Albanian	Bengali	Cambodian	Myanmar	Latvian	Lithuanian	Estonian	Laotian	Urdu
+
 }
