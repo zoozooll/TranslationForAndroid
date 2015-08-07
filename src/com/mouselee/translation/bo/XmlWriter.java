@@ -101,9 +101,9 @@ public class XmlWriter {
 	private File mkLanguageDirectories(File projectFile, String languageName) {
 		File folder = null;
 		if ("default".equals(languageName)) {
-			folder = new File(projectFile, "value");
+			folder = new File(projectFile, "values");
 		} else {
-			folder = new File(projectFile, "value-" + languageName);
+			folder = new File(projectFile, "values-" + languageName);
 		}
 		if (checkFolder(folder)) {
 			return folder;

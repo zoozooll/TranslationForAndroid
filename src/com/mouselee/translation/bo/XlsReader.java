@@ -169,6 +169,7 @@ public class XlsReader {
 				xmlItem.setValue(items);
 				strings.add(xmlItem);
 			}
+			value = null;
 		}
 		return notes;
 	}

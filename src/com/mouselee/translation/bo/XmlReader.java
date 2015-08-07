@@ -100,11 +100,14 @@ public class XmlReader {
 					if (language == null) {
 						continue;
 					}
-					item = new Language();
-					item.setLanguageName(language);
-					Log.t("LocalItem setLanguage " + language);
-					item.setXmlFiles(getNotes(f, language));
-					list.add(item);
+					List<XMLFile> xmlFiles = getNotes(f, language);
+					if (xmlFiles != null && !xmlFiles.isEmpty()) {
+						item = new Language();
+						item.setLanguageName(language);
+						Log.t("LocalItem setLanguage " + language);
+						item.setXmlFiles(xmlFiles);
+						list.add(item);
+					}
 				}
 			}
 		}
@@ -197,7 +200,8 @@ public class XmlReader {
 	}
 	
 	public static boolean isInLanguage(String language) {
-		return Arrays.binarySearch(LANGUAGES, language) >= 0;
+//		return Arrays.binarySearch(LANGUAGES, language) >= 0;
+		return true;
 	}
 
 }
