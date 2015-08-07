@@ -71,13 +71,14 @@ public class XMLWriteFactory {
 		String type = item.getType();
 		Object value =  item.getValue();
 		if (value instanceof String) {
-			root.addElement(type).addAttribute("name", tagName).addText((String) value);
+			if (!((String) value).isEmpty())
+			 root.addElement(type).addAttribute("name", tagName).addText((String) value);
 		}
-		if (value instanceof List) {
+		/*if (value instanceof List) {
 			List<String> strs = (List<String>) value;
 			Element arrayElement =  root.addElement(type);
 			addElementForStringArray(strs, arrayElement);
-		}
+		}*/
 	}
 
 	private void addElementForStringArray(List<String> strs, Element arrayElement) {

@@ -82,7 +82,7 @@ public class XlsWriter {
 				currentCell = firstRow.createCell(3);
 				currentCell.setCellValue("tagname");
 				currentCell = firstRow.createCell(4);
-				currentCell.setCellValue("default");
+				currentCell.setCellValue(com.mouselee.translation.utils.TextUtil.getDefaultTitle());
 				writeDefaultLanguage(sheet, item);
 				break;
 			}
@@ -113,7 +113,7 @@ public class XlsWriter {
 		Row firstRow = sheet.getRow(0);
 		mColIndex++;
 		Cell languageCell = firstRow.createCell(mColIndex);
-		languageCell.setCellValue(language);
+		languageCell.setCellValue(com.mouselee.translation.utils.TextUtil.getLanguageTitle(language));
 		List<XMLFile> notes = localItem.getXmlFiles();
 		if (notes != null) {
 			for (XMLFile xmlNote : notes) {

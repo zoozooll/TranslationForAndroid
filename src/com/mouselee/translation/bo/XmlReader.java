@@ -70,7 +70,7 @@ public class XmlReader {
 		Project item;
 		if (files != null) {
 			for (File f : files) {
-				if (f.isDirectory() && f.getName().contains("GameCenter")) {
+				if (f.isDirectory()) {
 					if (projects == null) {
 						projects = new ArrayList<Project>();
 					}
@@ -100,11 +100,14 @@ public class XmlReader {
 					if (language == null) {
 						continue;
 					}
-					item = new Language();
-					item.setLanguageName(language);
-					Log.t("LocalItem setLanguage " + language);
-					item.setXmlFiles(getNotes(f, language));
-					list.add(item);
+					List<XMLFile> xmlFiles = getNotes(f, language);
+					if (xmlFiles != null && !xmlFiles.isEmpty()) {
+						item = new Language();
+						item.setLanguageName(language);
+						Log.t("LocalItem setLanguage " + language);
+						item.setXmlFiles(xmlFiles);
+						list.add(item);
+					}
 				}
 			}
 		}
@@ -197,7 +200,7 @@ public class XmlReader {
 	}
 	
 	public static boolean isInLanguage(String language) {
-		//return Arrays.binarySearch(LANGUAGES, language) >= 0;
+//		return Arrays.binarySearch(LANGUAGES, language) >= 0;
 		return true;
 	}
 
